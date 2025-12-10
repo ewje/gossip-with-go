@@ -8,7 +8,7 @@ CREATE TABLE users (
 CREATE TABLE topics (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL,
-    description TEXT
+    user_id INT NOT NULL
 );
 
 CREATE TABLE posts (

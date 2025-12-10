@@ -2,6 +2,7 @@ package dataaccess
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ewje/gossip-with-go/internal/database"
 	"github.com/ewje/gossip-with-go/internal/models"
@@ -22,6 +23,43 @@ func ListPostsByTopic(db *database.Database, topicID string) ([]models.Post, err
 		posts = append(posts, p)
 	}
 	return posts, nil
+}
+
+func UpdatePost(db *database.Database, p models.Post) (models.Post, error) {
+	// 1. The Recipe: Update title and content where the ID matches
+	sql := `UPDATE posts SET title = $1, content = $2 WHERE id = $3`
+
+	// 2. The Cooking: Run the command
+	// We use Exec() because we don't need to get any data back, just a confirmation
+	tag, err := db.Pool.Exec(context.Background(), sql, p.Title, p.Content, p.ID)
+	if err != nil {
+		return p, err
+	}
+
+	// 3. The Check: Did we actually find a post to update?
+	if tag.RowsAffected() == 0 {
+		return p, fmt.Errorf("Post not found")
+	}
+
+	return p, nil
+}
+
+func DeletePost(db *database.Database, id int) error {
+	// 1. The Recipe: Delete the post with this specific ID
+	sql := `DELETE FROM posts WHERE id = $1`
+
+	// 2. The Cooking: Run the command
+	tag, err := db.Pool.Exec(context.Background(), sql, id)
+	if err != nil {
+		return err
+	}
+
+	// 3. The Check: Did we actually find a post to delete?
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("Post not found")
+	}
+
+	return nil
 }
 
 func CreatePost(db *database.Database, p models.Post) (models.Post, error) {

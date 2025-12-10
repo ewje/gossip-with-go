@@ -25,6 +25,12 @@ func GetRoutes() func(r chi.Router) {
 		r.Post("/topics", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, topics.HandleCreateTopic)
 		})
+		r.Put("/topics/{topicID}", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, topics.HandleUpdateTopic)
+		})
+		r.Delete("/topics/{topicsID}", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, topics.HandleDeleteTopic)
+		})
 
 		// Posts
 		r.Get("/topics/{topicID}/posts", func(w http.ResponseWriter, req *http.Request) {
@@ -32,6 +38,12 @@ func GetRoutes() func(r chi.Router) {
 		})
 		r.Post("/posts", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, posts.HandleCreatePost)
+		})
+		r.Put("/posts/{postID}", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, posts.HandleUpdatePost)
+		})
+		r.Delete("/posts/{postID}", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, posts.HandleDeletePost)
 		})
 	}
 }

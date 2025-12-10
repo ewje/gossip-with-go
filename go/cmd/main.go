@@ -11,7 +11,6 @@ import (
 
 func main() {
 	// 1. Initialize Database
-	// NOTE: Replace 'secret' with your actual password!
 	dbURL := "postgres://postgres:password@localhost:5432/forum_db"
 	err := database.InitDB(dbURL)
 	if err != nil {

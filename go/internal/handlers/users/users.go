@@ -14,12 +14,14 @@ import (
 
 const (
 	CreateUser = "user.HandleCreateUser"
+	LoginUser  = "user.HandleLogin"
 
 	ErrRetrieveDatabase         = "Failed to retrieve database in %s"
 	ErrCreateUser               = "Failed to create user in %s"
 	SuccessfulCreateUserMessage = "User created successfully"
 	ErrEncodeView               = "Failed to retrieve users in %s"
 	ErrRequestBody              = "Invalid request body in %s"
+	ErrLogin                    = "User not found in %s"
 )
 
 func HandleCreateUser(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
@@ -38,14 +40,22 @@ func HandleCreateUser(w http.ResponseWriter, r *http.Request) (*api.Response, er
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrCreateUser, CreateUser))
 	}
 
-	data, err := json.Marshal(u)
+	u, err = dataaccess.GetUserByUsername(db, u.Username)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf(ErrEncodeView, CreateUser))
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrLogin, CreateUser))
 	}
 
+	/*data, err := json.Marshal(u)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrEncodeView, CreateUser))
+	}*/
+
 	return &api.Response{
-		Payload:  api.Payload{Data: data},
-		Messages: []string{SuccessfulCreateUserMessage},
+		Payload: api.Payload{
+			// We return it in a format the frontend can easily save
+			Data: json.RawMessage(fmt.Sprintf(`{"token": "%d"}`, u.ID)),
+		},
+		Messages: []string{"Login successful"},
 	}, nil
 }
 
@@ -57,19 +67,19 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) (*api.Response, error) 
 		Username string `json:"username"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		return nil, errors.Wrap(err, "Invalid request")
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrRequestBody, LoginUser))
 	}
 
 	// 2. Open Kitchen
 	db, err := database.GetDB()
 	if err != nil {
-		return nil, errors.Wrap(err, "Database unavailable")
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, LoginUser))
 	}
 
 	// 3. Find the user
 	u, err := dataaccess.GetUserByUsername(db, request.Username)
 	if err != nil {
-		return nil, errors.Wrap(err, "User not found")
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrLogin, LoginUser))
 	}
 
 	// 4. Give them their "Token" (The User ID)

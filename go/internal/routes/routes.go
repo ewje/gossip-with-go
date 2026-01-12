@@ -17,6 +17,9 @@ func GetRoutes() func(r chi.Router) {
 		r.Post("/users", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, users.HandleCreateUser)
 		})
+		r.Post("/login", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, users.HandleLogin)
+		})
 
 		// Topics
 		r.Get("/topics", func(w http.ResponseWriter, req *http.Request) {

@@ -17,7 +17,7 @@ func Setup() chi.Router {
 
 	r.Use(cors.Handler(cors.Options{
 		// AllowedOrigins:   []string{"https://foo.com"}
-		AllowedOrigins: []string{"https://*", "http://*"},
+		AllowedOrigins: []string{"http://localhost:5173"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},

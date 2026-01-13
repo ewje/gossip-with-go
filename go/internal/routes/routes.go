@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ewje/gossip-with-go/internal/api"
+	"github.com/ewje/gossip-with-go/internal/handlers/comments"
 	"github.com/ewje/gossip-with-go/internal/handlers/posts"
 	"github.com/ewje/gossip-with-go/internal/handlers/topics"
 	"github.com/ewje/gossip-with-go/internal/handlers/users"
@@ -47,6 +48,14 @@ func GetRoutes() func(r chi.Router) {
 		})
 		r.Delete("/posts/{postID}", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, posts.HandleDeletePost)
+		})
+
+		//Comments
+		r.Get("/posts/{postID}/comments", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, comments.HandleListComments)
+		})
+		r.Post("/comments", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, comments.HandleCreateComment)
 		})
 	}
 }

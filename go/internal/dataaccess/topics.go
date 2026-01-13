@@ -9,7 +9,7 @@ import (
 )
 
 func ListTopics(db *database.Database) ([]models.Topic, error) {
-	rows, err := db.Pool.Query(context.Background(), "SELECT id, name, user_id FROM topics")
+	rows, err := db.Pool.Query(context.Background(), "SELECT * FROM topics")
 	if err != nil {
 		return nil, err
 	}
@@ -18,7 +18,8 @@ func ListTopics(db *database.Database) ([]models.Topic, error) {
 	topics := []models.Topic{}
 	for rows.Next() {
 		var t models.Topic
-		if err := rows.Scan(&t.ID, &t.Name, &t.UserID); err != nil {
+		if err := rows.Scan(&t.ID, &t.Name, &t.Description, &t.UserID); err != nil {
+			fmt.Println("Error scanning topic:", err)
 			continue
 		}
 		topics = append(topics, t)
@@ -27,17 +28,13 @@ func ListTopics(db *database.Database) ([]models.Topic, error) {
 }
 
 func UpdateTopic(db *database.Database, t models.Topic) (models.Topic, error) {
-	// 1. The Recipe: Update title and content where the ID matches
 	sql := `UPDATE topics SET name = $1 WHERE id = $2`
 
-	// 2. The Cooking: Run the command
-	// We use Exec() because we don't need to get any data back, just a confirmation
 	tag, err := db.Pool.Exec(context.Background(), sql, t.Name, t.ID)
 	if err != nil {
 		return t, err
 	}
 
-	// 3. The Check: Did we actually find a post to update?
 	if tag.RowsAffected() == 0 {
 		return t, fmt.Errorf("Topic not found")
 	}
@@ -46,16 +43,13 @@ func UpdateTopic(db *database.Database, t models.Topic) (models.Topic, error) {
 }
 
 func DeleteTopic(db *database.Database, id int) error {
-	// 1. The Recipe: Delete the post with this specific ID
 	sql := `DELETE FROM topics WHERE id = $1`
 
-	// 2. The Cooking: Run the command
 	tag, err := db.Pool.Exec(context.Background(), sql, id)
 	if err != nil {
 		return err
 	}
 
-	// 3. The Check: Did we actually find a post to delete?
 	if tag.RowsAffected() == 0 {
 		return fmt.Errorf("Topic not found")
 	}
@@ -64,7 +58,7 @@ func DeleteTopic(db *database.Database, id int) error {
 }
 
 func CreateTopic(db *database.Database, t models.Topic) (models.Topic, error) {
-	sql := `INSERT INTO topics (name, user_id) VALUES ($1, $2) RETURNING id`
-	err := db.Pool.QueryRow(context.Background(), sql, t.Name, t.UserID).Scan(&t.ID)
+	sql := `INSERT INTO topics (name, description, user_id) VALUES ($1, $2, $3) RETURNING id`
+	err := db.Pool.QueryRow(context.Background(), sql, t.Name, t.Description, t.UserID).Scan(&t.ID)
 	return t, err
 }

@@ -37,12 +37,12 @@ const (
 func HandleListTopics(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
 	db, err := database.GetDB()
 	if err != nil {
-		return nil, errors.Wrap(err, ErrRetrieveDatabase)
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, CreateTopics))
 	}
 
 	topics, err := dataaccess.ListTopics(db)
 	if err != nil {
-		return nil, errors.Wrap(err, ErrListTopics)
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrListTopics, CreateTopics))
 	}
 
 	data, _ := json.Marshal(topics)
@@ -60,12 +60,12 @@ func HandleCreateTopic(w http.ResponseWriter, r *http.Request) (*api.Response, e
 
 	db, err := database.GetDB()
 	if err != nil {
-		return nil, errors.Wrap(err, ErrRetrieveDatabase)
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, CreateTopics))
 	}
 
 	t, err = dataaccess.CreateTopic(db, t)
 	if err != nil {
-		return nil, errors.Wrap(err, ErrCreateTopic)
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrCreateTopic, CreateTopics))
 	}
 
 	data, _ := json.Marshal(t)

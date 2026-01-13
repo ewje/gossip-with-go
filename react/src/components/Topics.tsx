@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "./Header";
-import { Box, Container, justifyContent } from "@mui/system";
-import { Button, CssBaseline, Dialog, DialogActions, DialogContent, DialogTitle, Divider, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
+import { Box, Container } from "@mui/system";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, List, ListItem, ListItemText, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 
 interface Topic {
@@ -27,6 +27,7 @@ const Topics:React.FC = () => {
             const reponse = await fetch('http://localhost:8000/api/topics') 
             const result = await reponse.json()
             setTopics(result.payload?.data || result)
+            console.log(`fetched! ${result.payload.data}`)
         } catch (error) {
             console.error("Error fetching topics:", error)
         }
@@ -70,6 +71,7 @@ const Topics:React.FC = () => {
             }
         } catch (error) {
             console.error(error)
+            alert("Could not connect to server!")
         }
     }
 
@@ -86,20 +88,26 @@ const Topics:React.FC = () => {
                         New Topic
                     </Button>
                 </Box>
-                
-                <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                    {topics.map((topic, index) => (
-                        <React.Fragment key={topic.id}>
-                            <ListItem sx={{px: 5}} alignItems="flex-start" onClick={() => navigate(`/topics/${topic.id}`)}>
-                                <ListItemText
-                                    primary={topic.name}
-                                    secondary={`By User #${topic.user_id}`}
-                                />
-                            </ListItem>
-                            {index < topics.length - 1 && <Divider variant="inset" component="li" />}
-                        </React.Fragment>
-                    ))}
-                </List>
+                {topics.length === 0 ? (
+                    // 1. What to show if empty
+                    <Typography variant="body1" sx={{ p: 4, textAlign: 'center', color: 'text.secondary' }}>
+                        No topics found. Be the first to start a conversation!
+                    </Typography>
+                ) : (
+                    <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                        {topics.map((topic, index) => (
+                            <React.Fragment key={topic.id}>
+                                <ListItem sx={{px: 5}} alignItems="flex-start" onClick={() => navigate(`/topics/${topic.id}`)}>
+                                    <ListItemText 
+                                        primary={topic.name}
+                                        secondary={`By User #${topic.user_id}`}
+                                    />
+                                </ListItem>
+                                {index < topics.length - 1 && <Divider variant="inset" component="li" />}
+                            </React.Fragment>
+                        ))}
+                    </List>
+                )}
             </Container>
 
             <Dialog open={open} onClose={() => setOpen(false)}>

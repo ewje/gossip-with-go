@@ -6,6 +6,7 @@ import Register from './components/Register'
 import { CssBaseline } from '@mui/material'
 import Topics from './components/Topics'
 import Topic from './components/Topic'
+import Post from './components/Post'
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
       <Route path="/topics" element={<Topics />} />
 
       <Route path="/topics/:topicId" element={<Topic />} />
+
+      <Route path="/posts/:postId" element={<Post />} />
     </Routes>
   )
 }

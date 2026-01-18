@@ -2,6 +2,7 @@ package dataaccess
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ewje/gossip-with-go/internal/database"
 	"github.com/ewje/gossip-with-go/internal/models"
@@ -24,4 +25,23 @@ func GetUserByUsername(db *database.Database, username string) (models.User, err
 		return u, err
 	}
 	return u, nil
+}
+
+func ListUsers(db *database.Database) ([]models.User, error) {
+	rows, err := db.Pool.Query(context.Background(), "SELECT id, username FROM users")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	users := []models.User{}
+	for rows.Next() {
+		var u models.User
+		if err := rows.Scan(&u.ID, &u.Username); err != nil {
+			fmt.Println("Error scanning users:", err)
+			continue
+		}
+		users = append(users, u)
+	}
+	return users, nil
 }

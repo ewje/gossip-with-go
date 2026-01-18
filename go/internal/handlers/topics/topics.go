@@ -10,12 +10,13 @@ import (
 	"github.com/ewje/gossip-with-go/internal/dataaccess"
 	"github.com/ewje/gossip-with-go/internal/database"
 	"github.com/ewje/gossip-with-go/internal/models"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/pkg/errors"
 )
 
 const (
 	ListTopics   = "topics.HandleListTopics"
+	FetchTopic   = "topics.HandleFetchTopic"
 	CreateTopics = "topics.HandleCreateTopic"
 	UpdateTopics = "topics.HandleUpdatetopic"
 	DeleteTopics = "topics.HandleDeletetopic"
@@ -32,6 +33,7 @@ const (
 	SuccessfulListTopicsMessage  = "Topics listed successfully"
 	SuccessfulUpdateTopicMessage = "Topic update successfully"
 	SuccessfulDeleteTopicMessage = "Topic deleted successfully"
+	SuccessfulFetchTopicMessage  = "Topic fetched successfully"
 )
 
 func HandleListTopics(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
@@ -49,6 +51,30 @@ func HandleListTopics(w http.ResponseWriter, r *http.Request) (*api.Response, er
 	return &api.Response{
 		Payload:  api.Payload{Data: data},
 		Messages: []string{SuccessfulListTopicsMessage},
+	}, nil
+}
+
+func HandleFetchTopic(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
+	idStr := chi.URLParam(r, "topicID")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrInvalidId, FetchTopic))
+	}
+
+	db, err := database.GetDB()
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, FetchTopic))
+	}
+
+	topic, err := dataaccess.FetchTopic(db, id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrListTopics, FetchTopic))
+	}
+
+	data, _ := json.Marshal(topic)
+	return &api.Response{
+		Payload:  api.Payload{Data: data},
+		Messages: []string{SuccessfulFetchTopicMessage},
 	}, nil
 }
 

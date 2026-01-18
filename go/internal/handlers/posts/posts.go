@@ -16,6 +16,7 @@ import (
 
 const (
 	ListPosts  = "posts.HandleListPosts"
+	FetchPost  = "posts.HandleFetchPost"
 	CreatePost = "posts.HandleCreatePost"
 	UpdatePost = "posts.HandleUpdatePost"
 	DeletePost = "posts.HandleDeletePost"
@@ -32,6 +33,7 @@ const (
 	SuccessfulListPostsMessage  = "Posts listed successfully"
 	SuccessfulUpdatePostMessage = "Post update successfully"
 	SuccessfulDeletePostMessage = "Post deleted successfully"
+	SuccessfulFetchPostMessage  = "Post fetched successfully"
 )
 
 func HandleListPosts(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
@@ -50,6 +52,30 @@ func HandleListPosts(w http.ResponseWriter, r *http.Request) (*api.Response, err
 	return &api.Response{
 		Payload:  api.Payload{Data: data},
 		Messages: []string{SuccessfulListPostsMessage},
+	}, nil
+}
+
+func HandleFetchPost(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
+	idStr := chi.URLParam(r, "postID")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrInvalidId, FetchPost))
+	}
+
+	db, err := database.GetDB()
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, FetchPost))
+	}
+
+	topic, err := dataaccess.FetchPost(db, id)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrListPosts, FetchPost))
+	}
+
+	data, _ := json.Marshal(topic)
+	return &api.Response{
+		Payload:  api.Payload{Data: data},
+		Messages: []string{SuccessfulFetchPostMessage},
 	}, nil
 }
 

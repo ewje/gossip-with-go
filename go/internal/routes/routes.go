@@ -21,10 +21,16 @@ func GetRoutes() func(r chi.Router) {
 		r.Post("/login", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, users.HandleLogin)
 		})
+		r.Get("/users", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, users.HandleListUsers)
+		})
 
 		// Topics
 		r.Get("/topics", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, topics.HandleListTopics)
+		})
+		r.Get("/topics/{topicID}", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, topics.HandleFetchTopic)
 		})
 		r.Post("/topics", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, topics.HandleCreateTopic)
@@ -32,13 +38,16 @@ func GetRoutes() func(r chi.Router) {
 		r.Put("/topics/{topicID}", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, topics.HandleUpdateTopic)
 		})
-		r.Delete("/topics/{topicsID}", func(w http.ResponseWriter, req *http.Request) {
+		r.Delete("/topics/{topicID}", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, topics.HandleDeleteTopic)
 		})
 
 		// Posts
 		r.Get("/topics/{topicID}/posts", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, posts.HandleListPosts)
+		})
+		r.Get("/posts/{postID}", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, posts.HandleFetchPost)
 		})
 		r.Post("/posts", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, posts.HandleCreatePost)
@@ -56,6 +65,12 @@ func GetRoutes() func(r chi.Router) {
 		})
 		r.Post("/comments", func(w http.ResponseWriter, req *http.Request) {
 			handleRequest(w, req, comments.HandleCreateComment)
+		})
+		r.Put("/comments/{commentID}", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, comments.HandleUpdateComment)
+		})
+		r.Delete("/comments/{commentID}", func(w http.ResponseWriter, req *http.Request) {
+			handleRequest(w, req, comments.HandleDeleteComment)
 		})
 	}
 }

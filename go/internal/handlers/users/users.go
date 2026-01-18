@@ -15,10 +15,13 @@ import (
 const (
 	CreateUser = "user.HandleCreateUser"
 	LoginUser  = "user.HandleLogin"
+	ListUsers  = "user.HandleListUsers"
 
 	ErrRetrieveDatabase         = "Failed to retrieve database in %s"
 	ErrCreateUser               = "Failed to create user in %s"
 	SuccessfulCreateUserMessage = "User created successfully"
+	ErrListUsers                = "Failed to list users in %s"
+	SuccessfulListUsersMessage  = "Users listed successfully"
 	ErrEncodeView               = "Failed to retrieve users in %s"
 	ErrRequestBody              = "Invalid request body in %s"
 	ErrLogin                    = "User not found in %s"
@@ -91,5 +94,23 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) (*api.Response, error) 
 			Data: json.RawMessage(fmt.Sprintf(`{"token": "%d"}`, u.ID)),
 		},
 		Messages: []string{"Login successful"},
+	}, nil
+}
+
+func HandleListUsers(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
+	db, err := database.GetDB()
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, ListUsers))
+	}
+
+	users, err := dataaccess.ListUsers(db)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf(ErrListUsers, ListUsers))
+	}
+
+	data, _ := json.Marshal(users)
+	return &api.Response{
+		Payload:  api.Payload{Data: data},
+		Messages: []string{SuccessfulListUsersMessage},
 	}, nil
 }

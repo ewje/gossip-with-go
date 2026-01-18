@@ -11,13 +11,12 @@ func Setup() chi.Router {
 	r := chi.NewRouter()
 
 	// Add standard middleware
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.AllowContentType("application/json"))
+
+	//r.Use(middleware.AllowContentType("application/json"))
 
 	r.Use(cors.Handler(cors.Options{
 		// AllowedOrigins:   []string{"https://foo.com"}
-		AllowedOrigins: []string{"http://localhost:5173"},
+		AllowedOrigins: []string{"*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
@@ -25,6 +24,8 @@ func Setup() chi.Router {
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 
 	setUpRoutes(r)
 	return r

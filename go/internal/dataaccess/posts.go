@@ -25,6 +25,18 @@ func ListPostsByTopic(db *database.Database, topicID string) ([]models.Post, err
 	return posts, nil
 }
 
+func FetchPost(db *database.Database, id int) (models.Post, error) {
+	sql := `SELECT * FROM posts WHERE id = $1`
+	var p models.Post
+
+	err := db.Pool.QueryRow(context.Background(), sql, id).Scan(&p.ID, &p.UserID, &p.TopicID, &p.Title, &p.Content, &p.CreatedAt)
+	if err != nil {
+		return p, err
+	}
+
+	return p, nil
+}
+
 func UpdatePost(db *database.Database, p models.Post) (models.Post, error) {
 	// 1. The Recipe: Update title and content where the ID matches
 	sql := `UPDATE posts SET title = $1, content = $2 WHERE id = $3`

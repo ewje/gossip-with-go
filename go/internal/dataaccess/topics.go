@@ -27,6 +27,18 @@ func ListTopics(db *database.Database) ([]models.Topic, error) {
 	return topics, nil
 }
 
+func FetchTopic(db *database.Database, id int) (models.Topic, error) {
+	sql := `SELECT * FROM topics WHERE id = $1`
+	var t models.Topic
+
+	err := db.Pool.QueryRow(context.Background(), sql, id).Scan(&t.ID, &t.Name, &t.Description, &t.UserID)
+	if err != nil {
+		return t, err
+	}
+
+	return t, nil
+}
+
 func UpdateTopic(db *database.Database, t models.Topic) (models.Topic, error) {
 	sql := `UPDATE topics SET name = $1 WHERE id = $2`
 

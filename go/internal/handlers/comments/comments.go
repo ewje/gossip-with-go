@@ -10,7 +10,7 @@ import (
 	"github.com/ewje/gossip-with-go/internal/dataaccess"
 	"github.com/ewje/gossip-with-go/internal/database"
 	"github.com/ewje/gossip-with-go/internal/models"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/pkg/errors"
 )
 

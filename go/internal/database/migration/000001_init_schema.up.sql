@@ -15,7 +15,7 @@ CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     topic_id INT REFERENCES topics(id) ON DELETE CASCADE,
-    title VARCHAR(200) NOT NULL,
+    title TEXT NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,8 +1,8 @@
-#Gossip with Go
+# Gossip with Go
 
 Ethan Wong Jing En
 
-##Setup Instructions
+## Setup Instructions
 This project uses Docker to run PostgreSQL.
 
 Prerequisites:

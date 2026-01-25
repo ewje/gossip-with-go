@@ -83,28 +83,23 @@ func HandleUpdateComment(w http.ResponseWriter, r *http.Request) (*api.Response,
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrInvalidId, UpdateComment))
 	}
 
-	// 2. Read the Changes: Decode the JSON body (new title/content)
 	var c models.Comment
 	if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrRequestBody, UpdateComment))
 	}
 
-	// Important: Force the ID from the URL into the struct
 	c.ID = id
 
-	// 3. Open Kitchen Door
 	db, err := database.GetDB()
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, UpdateComment))
 	}
 
-	// 4. Tell the Chef
 	updatedPost, err := dataaccess.UpdateComment(db, c)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrUpdateComment, UpdateComment))
 	}
 
-	// 5. Reply to Customer
 	data, _ := json.Marshal(updatedPost)
 	return &api.Response{
 		Payload:  api.Payload{Data: data},
@@ -113,26 +108,21 @@ func HandleUpdateComment(w http.ResponseWriter, r *http.Request) (*api.Response,
 }
 
 func HandleDeleteComment(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
-	// 1. Identify the Post: Read the ID from the URL
 	idStr := chi.URLParam(r, "commentID")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrInvalidId, DeleteComment))
 	}
 
-	// 2. Open Kitchen Door
 	db, err := database.GetDB()
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, DeleteComment))
 	}
 
-	// 3. Tell the Chef
 	if err := dataaccess.DeleteComment(db, id); err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDeleteComment, DeleteComment))
 	}
 
-	// 4. Reply to Customer
-	// Note: We don't return any data payload for a delete, just a success message.
 	return &api.Response{
 		Messages: []string{SuccessfulDeleteCommentMessage},
 	}, nil

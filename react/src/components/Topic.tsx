@@ -71,7 +71,7 @@ const Topic:React.FC = () => {
 
                 return 0
             })
-            setPosts(result.payload?.data || result)
+            setPosts(sorted || result)
         } catch (error) {
             console.error("Error fetching posts:", error)
         }

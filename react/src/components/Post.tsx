@@ -197,7 +197,7 @@ const Post:React.FC = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8000/api/comment/${commentToDelete}`, {
+            const response = await fetch(`http://localhost:8000/api/comments/${commentToDelete}`, {
                 method: 'DELETE',
             })
 

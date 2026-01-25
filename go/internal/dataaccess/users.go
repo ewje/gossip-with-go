@@ -16,10 +16,8 @@ func CreateUser(db *database.Database, u models.User) (models.User, error) {
 
 func GetUserByUsername(db *database.Database, username string) (models.User, error) {
 	var u models.User
-	// 1. The Recipe: Find user by name
 	sql := `SELECT id, username FROM users WHERE username = $1`
 
-	// 2. The Cooking
 	err := db.Pool.QueryRow(context.Background(), sql, username).Scan(&u.ID, &u.Username)
 	if err != nil {
 		return u, err

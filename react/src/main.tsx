@@ -7,7 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>
-    <BrowserRouter> {/* <--- Wrap everything in this */}
+    <BrowserRouter>
       <CssBaseline />
       <App />
     </BrowserRouter>

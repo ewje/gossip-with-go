@@ -10,10 +10,6 @@ import (
 func Setup() chi.Router {
 	r := chi.NewRouter()
 
-	// Add standard middleware
-
-	//r.Use(middleware.AllowContentType("application/json"))
-
 	r.Use(cors.Handler(cors.Options{
 		// AllowedOrigins:   []string{"https://foo.com"}
 		AllowedOrigins: []string{"*"},

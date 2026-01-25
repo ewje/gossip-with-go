@@ -38,10 +38,8 @@ func FetchPost(db *database.Database, id int) (models.Post, error) {
 }
 
 func UpdatePost(db *database.Database, p models.Post) (models.Post, error) {
-	// 1. The Recipe: Update title and content where the ID matches
 	sql := `UPDATE posts SET title = $1, content = $2 WHERE id = $3`
 
-	// 2. The Cooking: Run the command
 	// We use Exec() because we don't need to get any data back, just a confirmation
 	tag, err := db.Pool.Exec(context.Background(), sql, p.Title, p.Content, p.ID)
 	if err != nil {
@@ -57,16 +55,13 @@ func UpdatePost(db *database.Database, p models.Post) (models.Post, error) {
 }
 
 func DeletePost(db *database.Database, id int) error {
-	// 1. The Recipe: Delete the post with this specific ID
 	sql := `DELETE FROM posts WHERE id = $1`
 
-	// 2. The Cooking: Run the command
 	tag, err := db.Pool.Exec(context.Background(), sql, id)
 	if err != nil {
 		return err
 	}
 
-	// 3. The Check: Did we actually find a post to delete?
 	if tag.RowsAffected() == 0 {
 		return fmt.Errorf("Post not found")
 	}

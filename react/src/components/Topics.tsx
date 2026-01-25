@@ -270,7 +270,7 @@ const Topics:React.FC = () => {
                     />
                     
                     <TextField
-                        margin="dense"
+                        //margin="dense"
                         label="Description"
                         fullWidth
                         multiline
@@ -278,6 +278,7 @@ const Topics:React.FC = () => {
                         variant="outlined"
                         value={newTopicDescription}
                         onChange={(e) => setNewTopicDescription(e.target.value)}
+                        sx={{ mt: 1, mb: 1 }}
                     />
                 </DialogContent>
                 <DialogActions>

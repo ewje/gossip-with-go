@@ -17,8 +17,6 @@ type Database struct {
 	Pool *pgxpool.Pool
 }
 
-// InitDB initializes the database connection pool.
-// Call this once in main.go
 func InitDB(connString string) error {
 	var err error
 	once.Do(func() {

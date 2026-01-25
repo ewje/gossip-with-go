@@ -108,28 +108,23 @@ func HandleUpdateTopic(w http.ResponseWriter, r *http.Request) (*api.Response, e
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrInvalidId, UpdateTopics))
 	}
 
-	// 2. Read the Changes: Decode the JSON body (new title/content)
 	var t models.Topic
 	if err := json.NewDecoder(r.Body).Decode(&t); err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrRequestBody, UpdateTopics))
 	}
 
-	// Important: Force the ID from the URL into the struct
 	t.ID = id
 
-	// 3. Open Kitchen Door
 	db, err := database.GetDB()
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, UpdateTopics))
 	}
 
-	// 4. Tell the Chef
 	updatedTopic, err := dataaccess.UpdateTopic(db, t)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrUpdateTopic, UpdateTopics))
 	}
 
-	// 5. Reply to Customer
 	data, _ := json.Marshal(updatedTopic)
 	return &api.Response{
 		Payload:  api.Payload{Data: data},
@@ -138,26 +133,21 @@ func HandleUpdateTopic(w http.ResponseWriter, r *http.Request) (*api.Response, e
 }
 
 func HandleDeleteTopic(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
-	// 1. Identify the Topic: Read the ID from the URL
 	idStr := chi.URLParam(r, "topicID")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrInvalidId, DeleteTopics))
 	}
 
-	// 2. Open Kitchen Door
 	db, err := database.GetDB()
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, DeleteTopics))
 	}
 
-	// 3. Tell the Chef
 	if err := dataaccess.DeleteTopic(db, id); err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrDeleteTopic, DeleteTopics))
 	}
 
-	// 4. Reply to Customer
-	// Note: We don't return any data payload for a delete, just a success message.
 	return &api.Response{
 		Messages: []string{SuccessfulDeleteTopicMessage},
 	}, nil

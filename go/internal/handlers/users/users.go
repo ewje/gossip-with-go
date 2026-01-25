@@ -65,7 +65,6 @@ func HandleCreateUser(w http.ResponseWriter, r *http.Request) (*api.Response, er
 // internal/handlers/users/users.go
 
 func HandleLogin(w http.ResponseWriter, r *http.Request) (*api.Response, error) {
-	// 1. Read the name tag
 	var request struct {
 		Username string `json:"username"`
 	}
@@ -73,21 +72,16 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) (*api.Response, error) 
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrRequestBody, LoginUser))
 	}
 
-	// 2. Open Kitchen
 	db, err := database.GetDB()
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrRetrieveDatabase, LoginUser))
 	}
 
-	// 3. Find the user
 	u, err := dataaccess.GetUserByUsername(db, request.Username)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf(ErrLogin, LoginUser))
 	}
 
-	// 4. Give them their "Token" (The User ID)
-	// In a real app, you would generate a secure random string here (JWT/Session ID).
-	// For this simple example, the UserID IS the token.
 	return &api.Response{
 		Payload: api.Payload{
 			// We return it in a format the frontend can easily save
